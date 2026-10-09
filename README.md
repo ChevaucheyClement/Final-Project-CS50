@@ -1,6 +1,6 @@
 <h1 align="center">PlantWeb - CS50 Final Project</h1>
 <p align="center">
-  <a href="https://yoficlemy.github.io/Final-Project-CS50/" target="_blank" rel="noopener noreferrer">
+  <a href="https://chevaucheyclement.github.io/Final-Project-CS50/" target="_blank" rel="noopener noreferrer">
     <img alt="Project Page"
          src="https://img.shields.io/badge/Page-Project-1f77b4?style=flat&labelColor=555">
   </a>
@@ -8,9 +8,9 @@
     <img alt="Live Demo"
          src="https://img.shields.io/badge/Live-Demo-f97316?style=flat&labelColor=555">
   </a>
-  <a href="https://github.com/YofiClemy/Final-Project-CS50/releases/latest" target="_blank" rel="noopener noreferrer">
+  <a href="https://github.com/ChevaucheyClement/Final-Project-CS50/releases/latest" target="_blank" rel="noopener noreferrer">
     <img alt="Latest Release"
-         src="https://img.shields.io/github/v/release/YofiClemy/Final-Project-CS50?display_name=tag&color=10b981&label=Release&style=flat&labelColor=555">
+         src="https://img.shields.io/github/v/release/ChevaucheyClement/Final-Project-CS50?display_name=tag&color=10b981&label=Release&style=flat&labelColor=555">
   </a>
 </p>
 Track your houseplants, store photos, and never miss a watering. Built with **Python**, **Flask** and **SQLite** for a CS50 final project.
@@ -24,7 +24,7 @@ Track your houseplants, store photos, and never miss a watering. Built with **Py
 - Clean Bootstrap UI with empty state and due-status badges
 
 **Live demo:** https://final-project-cs50.onrender.com/
-**Repo:** https://github.com/YofiClemy/Final-Project-CS50
+**Repo:** https://github.com/ChevaucheyClement/Final-Project-CS50
 
 ## Video demo
 
