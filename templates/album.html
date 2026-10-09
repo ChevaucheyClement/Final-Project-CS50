@@ -33,7 +33,7 @@
               style="aspect-ratio:4/3;object-fit:cover">
           {% else %}
             <img
-              src="{{ url_for('static', filename='default_plant.jpg') }}"
+              src="{{ url_for('static', filename='stock/default_plant.jpg') }}"
               class="card-img-top" alt="Plant"
               loading="lazy" decoding="async"
               width="640" height="480"
@@ -57,6 +57,7 @@
           </div>
 
           <div class="card-footer">
+            <a class="btn btn-outline-secondary w-100 mb-2" href="{{ url_for('edit_plant', plant_id=plant.id_plant) }}">Edit plant</a>
             <form method="post" action="{{ url_for('water', plant_id=plant.id_plant) }}">
               <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
               <button type="submit" class="btn btn-primary w-100">Water now</button>

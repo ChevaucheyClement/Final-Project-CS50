@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% block title %}Bad request · PlantWeb{% endblock %}
+{% block content %}
+<div class="container" style="max-width:680px">
+  <h1 class="mb-3">Request could not be completed</h1>
+  <p>{{ error }}</p>
+  <a class="btn btn-primary" href="{{ url_for('index') }}">Return home</a>
+</div>
+{% endblock %}

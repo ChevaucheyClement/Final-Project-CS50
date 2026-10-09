@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+{% block title %}Edit Plant · PlantWeb{% endblock %}
+{% block content %}
+<div class="container" style="max-width:720px">
+  <h1 class="mb-4">Edit {{ plant.name }}</h1>
+
+  {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data" class="vstack gap-3">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label" for="plantName">Name</label>
+        <input class="form-control" id="plantName" name="name" value="{{ plant.name }}" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label" for="plantRoom">Room</label>
+        <input class="form-control" id="plantRoom" name="room" value="{{ plant.room or '' }}" placeholder="Kitchen, Living room…">
+      </div>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label" for="plantAdded">Added on</label>
+        <input class="form-control" id="plantAdded" type="date" name="added" value="{{ plant.added }}">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label" for="plantInterval">Watering interval (days)</label>
+        <input class="form-control" id="plantInterval" type="number" name="winterval" min="1" max="365" value="{{ plant.winterval }}">
+      </div>
+    </div>
+
+    <div>
+      <label class="form-label d-block">Image source</label>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="photo_mode" id="pmUpload" value="upload" {% if plant.photo_source != 'stock' %}checked{% endif %}>
+        <label class="form-check-label" for="pmUpload">Keep current image or upload a new one</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="photo_mode" id="pmStock" value="stock" {% if plant.photo_source == 'stock' %}checked{% endif %}>
+        <label class="form-check-label" for="pmStock">Choose from library</label>
+      </div>
+    </div>
+
+    <div id="uploadWrap">
+      <label class="form-label" for="plantPhoto">Upload a replacement photo (2 MB max)</label>
+      <input class="form-control" id="plantPhoto" type="file" name="photo" accept="image/*">
+    </div>
+
+    <div id="stockWrap" class="d-none">
+      <label class="form-label" for="stockKey">Choose a stock image</label>
+      <select class="form-select" id="stockKey" name="stock_key">
+        <option value="" disabled {% if plant.photo_source != 'stock' %}selected{% endif %}>Pick one…</option>
+        {% for key, path in stock_images.items() %}
+          <option value="{{ key }}" {% if plant.photo_path == path %}selected{% endif %}>{{ key|replace('_',' ')|title }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="d-flex gap-2">
+      <button class="btn btn-primary" type="submit">Save changes</button>
+      <a class="btn btn-outline-secondary" href="{{ url_for('my_plants') }}">Cancel</a>
+    </div>
+  </form>
+</div>
+
+<script>
+  const pmUpload = document.getElementById('pmUpload');
+  const pmStock = document.getElementById('pmStock');
+  const uploadWrap = document.getElementById('uploadWrap');
+  const stockWrap = document.getElementById('stockWrap');
+
+  function syncMode() {
+    const stock = pmStock.checked;
+    stockWrap.classList.toggle('d-none', !stock);
+    uploadWrap.classList.toggle('d-none', stock);
+  }
+  pmUpload.addEventListener('change', syncMode);
+  pmStock.addEventListener('change', syncMode);
+  syncMode();
+</script>
+{% endblock %}

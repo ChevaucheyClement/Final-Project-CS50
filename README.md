@@ -15,6 +15,8 @@
 </p>
 Track your houseplants, store photos, and never miss a watering. Built with **Python**, **Flask** and **SQLite** for a CS50 final project.
 
+**Maintenance note:** The repository has been updated since the course submission. The account links, edit/error page templates and default-image path were repaired afterward; they should not be read as features verified in the original submitted version.
+
 - Add plants with either an uploaded image or a stock image from `static/stock/`
 - Images are resized server-side to fast thumbnails; album images are **lazy-loaded** with fixed dimensions
 - Due-date logic: next watering is computed from the last watering or the added date
@@ -74,15 +76,15 @@ Track your houseplants, store photos, and never miss a watering. Built with **Py
 ├── templates/
 │   ├── layout.html
 │   ├── login.html
+│   ├── 400.html
 │   ├── main.html
 │   ├── add_plant.html
 │   ├── edit_plant.html
 │   └── album.html
 ├── static/
 │   ├── logo.png
-│   ├── default_plant.jpg
 │   ├── empty-plants.svg
-│   └── stock/            # stock images live here (e.g., cactus.jpg)
+│   └── stock/            # stock images and default_plant.jpg live here
 └── instance/             # created at runtime (ignored by git)
     └── database.db       # SQLite DB (auto-created)
 ```
