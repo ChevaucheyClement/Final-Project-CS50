@@ -51,7 +51,7 @@ Track your houseplants, store photos, and never miss a watering. Built with **Py
   - Uploads are normalized to JPEG thumbnails server-side with Pillow.
   - Album images are lazy-loaded and rendered with fixed width/height to avoid layout shift.
 - **Empty state:** friendly SVG and CTA when you have no plants.
-- **Security:** CSRF tokens on every POST form; HTTPOnly, SameSite=Lax cookies; Secure cookies in production.
+- **Security:** CSRF tokens on POST forms; HTTPOnly, SameSite=Lax cookies; Secure cookies when Render sets `RENDER`.
 - **Schema bootstrap:** SQLite schema is created and lightly migrated at startup (adds missing columns like `email`, `photo_*`).
 - **Health check:** `/healthz` endpoint for deployments.
 
@@ -114,7 +114,7 @@ sqlite3 instance/database.db < schema.sql
 
 Environment variables:
 
-- `SECRET_KEY` (required) session signing secret
+- `SECRET_KEY` (set for deployments) session signing secret; without it, the app generates a new random key at startup, which invalidates existing sessions after a restart
 - `DATABASE_FILE` (optional) absolute path to a custom SQLite file
 
 App config (see `app.py`):
@@ -122,7 +122,7 @@ App config (see `app.py`):
 - `MAX_CONTENT_LENGTH = 2 * 1024 * 1024` (2 MB upload cap)
 - `SESSION_COOKIE_HTTPONLY = True`
 - `SESSION_COOKIE_SAMESITE = "Lax"`
-- `SESSION_COOKIE_SECURE = True` in production (Render is HTTPS)
+- `SESSION_COOKIE_SECURE = True` when the `RENDER` environment variable is set
 
 ### Optional: “Remember me”
 ```python
@@ -154,7 +154,7 @@ Album display prefers: Uploaded photo → Stock image → Default placeholder.
 
 ## CSRF Protection
 
-A minimal CSRF guard is active for all non-GET requests. Include the token in every POST form:
+A minimal CSRF guard is active for POST, PUT, PATCH and DELETE requests. Include the token in every POST form:
 
 ```html
 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
@@ -181,18 +181,18 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email ON Users(email);
 
 ## Security Notes
 
-- **Password hashing:** Credentials are hashed with Werkzeug’s PBKDF2; plaintext is never stored.
-- **CSRF protection:** All non-GET requests require a CSRF token (hidden form field or `X-CSRF-Token` header). Forms include the token; the server verifies it before processing.
-- **Sessions:** Server-side sessions via Flask-Session (filesystem). Cookies are `HttpOnly` and `SameSite=Lax`; set `SESSION_COOKIE_SECURE=True` in production (HTTPS). Optional “Remember me” uses a bounded `PERMANENT_SESSION_LIFETIME`.
+- **Password hashing:** Credentials are hashed with Werkzeug (new accounts currently use scrypt); plaintext is never stored.
+- **CSRF protection:** POST, PUT, PATCH and DELETE requests require a session CSRF token (hidden form field or `X-CSRF-Token` header). The server verifies it before processing.
+- **Sessions:** Server-side sessions via Flask-Session (filesystem). Cookies are `HttpOnly` and `SameSite=Lax`; `SESSION_COOKIE_SECURE` is enabled when `RENDER` is set. Optional “Remember me” uses a bounded `PERMANENT_SESSION_LIFETIME`.
 - **Upload handling:** Images are size-capped (2 MB), decoded and normalized with Pillow to JPEG thumbnails, and MIME is constrained. Upload routes are CSRF-protected.
-- **DB safety:** All SQL uses parameterized queries; `PRAGMA foreign_keys=ON` is enabled; index on `Plants(user_id)` for isolation and performance.
-- **Secrets & data at rest:** `SECRET_KEY` must be provided via environment. The `instance/` directory (sessions, SQLite file) is not committed to git.
+- **DB safety:** Queries with user-supplied values use parameters; `PRAGMA foreign_keys=ON` is enabled; an index on `Plants(user_id)` supports per-user lookups.
+- **Secrets & data at rest:** Set a persistent `SECRET_KEY` through the environment for deployments. The `instance/` directory (sessions, SQLite file) is not committed to git.
 - **Known limitations (future hardening):** no email verification or password reset flow; no rate-limiting or lockout; no 2FA; no content security policy tuning. Add these if you keep it public beyond a class demo.
 
 ## CS50 “Distinctiveness and Complexity”
 
 - **Auth + sessions:** Hashed passwords with Werkzeug; server-side session storage; optional “Remember me” with controlled lifetime.
-- **CSRF guard:** Minimal global CSRF middleware with per-form tokens across all POST actions.
+- **CSRF guard:** Minimal global CSRF middleware with a session token included in POST forms.
 - **Images pipeline:** Dual image sources (upload or stock whitelist), server-side normalization to thumbnails with Pillow, lazy-loaded album images with fixed dimensions to prevent layout shift.
 - **Data model & migrations:** SQLite schema bootstrap at startup plus lightweight column/index migrations (`photo_*`, `email`) to keep existing DBs compatible.
 - **Scheduling logic:** Next-watering computation derived from last watered or added date; status badges (overdue / due soon / OK) driven by `days_left`.
